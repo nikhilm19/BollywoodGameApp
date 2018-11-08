@@ -111,21 +111,13 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
 
                     case R.id.play_game_btn:
 
-                        wonGame.setVisibility(View.INVISIBLE);
-                        chancesLeftText.setText("Chances left: 9");
                         movie= new Movie();
                         Random random= new Random();
                         movieId= random.nextInt(1200);
                         getMovie(movieId);
-                        chancesLeftText.setVisibility(View.VISIBLE);
                         cSession= new Session(movie);
-                        wonGame.setVisibility(View.INVISIBLE);
-                        playBtn.setVisibility(View.INVISIBLE);
-                        hintBtn.setVisibility(View.VISIBLE);
-                        guessLetterBtn.setVisibility(View.VISIBLE);
-                        letterInput.setVisibility(View.VISIBLE);
-                        //setMovie();
 
+                        updateUiOnSessionStart();
                         if(movie.title !=null )hideProgress();
 
 
@@ -190,7 +182,6 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                             hideProgress();
                                             Snackbar.make(view, "Yes the letter " + letter + " is in the movie", Snackbar.LENGTH_LONG).show();
 
-                                            cSession.lettersGuessed.add(letter);
                                             Log.i("test", "yes letter : " + letter);
 
                                             Log.i("test", movie.title);
@@ -211,16 +202,12 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                                 anim.setDuration(50); //You can manage the blinking time with this parameter
                                                 anim.setStartOffset(20);
                                                 anim.setRepeatMode(Animation.REVERSE);
-                                                anim.setRepeatCount(Animation.INFINITE);
-                                                wonGame.setVisibility(View.VISIBLE);
+                                                anim.setRepeatCount(20);
+                                                Snackbar.make(view, "You guessed the movie in " + (cSession.noOfGuesses) + " chances", Snackbar.LENGTH_SHORT).show();
+                                               updateUiAfterSessionEnd();
                                                 wonGame.setText("WON!!");
                                                 wonGame.startAnimation(anim);
-                                                Snackbar.make(view, "You guessed the movie in " + (cSession.noOfGuesses) + " chances", Snackbar.LENGTH_SHORT).show();
-                                                letterInput.setVisibility(View.INVISIBLE);
-                                                hintText.setVisibility(View.INVISIBLE);
-                                                playBtn.setVisibility(View.VISIBLE);
-                                                guessLetterBtn.setVisibility(View.INVISIBLE);
-                                                hintBtn.setVisibility(View.INVISIBLE);
+
                                             } else
                                             {
 
@@ -242,17 +229,12 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                                 anim.setDuration(50); //You can manage the blinking time with this parameter
                                                 anim.setStartOffset(20);
                                                 anim.setRepeatMode(Animation.RESTART);
-                                                anim.setRepeatCount(Animation.INFINITE);
-
-                                                wonGame.setVisibility(View.VISIBLE);
+                                                anim.setRepeatCount(20);
                                                 wonGame.setText("LOST!!");
                                                 wonGame.startAnimation(anim);
                                                 movieText.setText("The movie was " + movie.title);
                                                 Snackbar.make(view, "Oops. You couldn't guess the movie.", Snackbar.LENGTH_SHORT).show();
-                                                playBtn.setVisibility(View.VISIBLE);
-                                                guessLetterBtn.setVisibility(View.INVISIBLE);
-                                                hintBtn.setVisibility(View.INVISIBLE);
-                                                lettersGuessed.setVisibility(View.INVISIBLE);
+                                                updateUiAfterSessionEnd();
 
                                             } else {
                                                 cSession.lettersGuessed.add(letter);
@@ -279,10 +261,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
 
                                         if(input.toUpperCase().compareTo(movie.title)==0){
                                             hideProgress();
-                                            wonGame.setVisibility(View.VISIBLE);
                                             wonGame.setText("WON!!!");
-                                            chancesLeftText.setVisibility(View.INVISIBLE);
-                                            letterInput.setVisibility(View.INVISIBLE);
                                             Animation anim= new AlphaAnimation(0.0f,1.0f);
                                             anim.setDuration(50); //You can manage the blinking time with this parameter
                                             anim.setStartOffset(20);
@@ -290,10 +269,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                             anim.setRepeatCount(10);
                                             movieText.setText("Yes. The movie is "+movie.title);
                                             movieText.startAnimation(anim);
-                                            playBtn.setVisibility(View.VISIBLE);
-                                            lettersGuessed.setVisibility(View.INVISIBLE);
-                                            hintBtn.setVisibility(View.INVISIBLE);
-                                            guessLetterBtn.setVisibility(View.INVISIBLE);
+                                           updateUiAfterSessionEnd();
                                         }
                                         else if (cSession.moviesGuessed.contains(input.toUpperCase())){
                                             Snackbar.make(view,"Already guessed that movie.",Snackbar.LENGTH_SHORT).show();
@@ -302,11 +278,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                         }
                                         else{
                                             if(cSession.noOfGuesses==8){
-                                                lettersGuessed.setVisibility(View.INVISIBLE);
-                                                wonGame.setVisibility(View.VISIBLE);
                                                 wonGame.setText("LOST!!!");
-                                                chancesLeftText.setVisibility(View.INVISIBLE);
-                                                letterInput.setVisibility(View.INVISIBLE);
                                                 Animation anim= new AlphaAnimation(0.0f,1.0f);
                                                 anim.setDuration(50); //You can manage the blinking time with this parameter
                                                 anim.setStartOffset(20);
@@ -314,7 +286,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                                 anim.setRepeatCount(10);
                                                 movieText.setText("No! The movie was "+movie.title);
                                                 movieText.startAnimation(anim);
-                                                playBtn.setVisibility(View.VISIBLE);
+                                                updateUiAfterSessionEnd();
                                             }
                                             else{
                                                 hideProgress();
@@ -402,6 +374,32 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
         Log.i("test",title);
         movieText.setText("Movie is : \n" +title.toUpperCase());
         chancesLeftText.setVisibility(View.VISIBLE);
+
+    }
+
+    public void updateUiAfterSessionEnd(){
+        playBtn.setVisibility(View.VISIBLE);
+        lettersGuessed.setVisibility(View.INVISIBLE);
+        hintBtn.setVisibility(View.INVISIBLE);
+        guessLetterBtn.setVisibility(View.INVISIBLE);
+        letterInput.setVisibility(View.INVISIBLE);
+        chancesLeftText.setVisibility(View.INVISIBLE);
+
+
+    }
+
+    public void updateUiOnSessionStart(){
+
+            wonGame.setVisibility(View.INVISIBLE);
+
+            playBtn.setVisibility(View.INVISIBLE);
+            lettersGuessed.setText("Letters Guessed: "+cSession.lettersGuessed.toString());
+            lettersGuessed.setVisibility(View.VISIBLE);
+            hintBtn.setVisibility(View.VISIBLE);
+            guessLetterBtn.setVisibility(View.VISIBLE);
+            letterInput.setVisibility(View.VISIBLE);
+            chancesLeftText.setVisibility(View.VISIBLE);
+            chancesLeftText.setText("Chances left:9");
 
     }
 
