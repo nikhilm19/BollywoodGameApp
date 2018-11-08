@@ -221,7 +221,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                             cSession.noOfGuesses += 1;
                                             if (cSession.noOfGuesses == 8) {
                                                 hideProgress();
-                                                Snackbar.make(view, "Last guess Coming up..", Snackbar.LENGTH_SHORT).show();
+                                                Snackbar.make(view, "Last guess Coming up..", Snackbar.LENGTH_LONG).show();
                                             }
                                             if (cSession.noOfGuesses == 9) {
                                                 hideProgress();
@@ -262,6 +262,8 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                         if(input.toUpperCase().compareTo(movie.title)==0){
                                             hideProgress();
                                             wonGame.setText("WON!!!");
+                                            wonGame.setVisibility(View.VISIBLE);
+
                                             Animation anim= new AlphaAnimation(0.0f,1.0f);
                                             anim.setDuration(50); //You can manage the blinking time with this parameter
                                             anim.setStartOffset(20);
@@ -269,7 +271,8 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                             anim.setRepeatCount(10);
                                             movieText.setText("Yes. The movie is "+movie.title);
                                             movieText.startAnimation(anim);
-                                           updateUiAfterSessionEnd();
+                                            wonGame.setAnimation(anim);
+                                            updateUiAfterSessionEnd();
                                         }
                                         else if (cSession.moviesGuessed.contains(input.toUpperCase())){
                                             Snackbar.make(view,"Already guessed that movie.",Snackbar.LENGTH_SHORT).show();
