@@ -292,6 +292,8 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
                                             movieText.startAnimation(anim);
                                             playBtn.setVisibility(View.VISIBLE);
                                             lettersGuessed.setVisibility(View.INVISIBLE);
+                                            hintBtn.setVisibility(View.INVISIBLE);
+                                            guessLetterBtn.setVisibility(View.INVISIBLE);
                                         }
                                         else if (cSession.moviesGuessed.contains(input.toUpperCase())){
                                             Snackbar.make(view,"Already guessed that movie.",Snackbar.LENGTH_SHORT).show();
